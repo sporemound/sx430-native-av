@@ -12,4 +12,6 @@ A CHDK display packet transferred over Wi-Fi but contained no demonstrated live 
 
 The direct-handler candidate in [mode-transition.md](mode-transition.md) has passed offline checks and remains untested on hardware. Native encoder access, AAC extraction, sustained throughput, timing, and OBS support remain unimplemented or unverified.
 
+The first candidate script attempt stopped at its first wait, before requesting shooting or invoking the native handler. Lua 5.1 rejected a yield across `pcall(run)`. The corrected script keeps waits outside protected calls and returns expected guard failures explicitly. A separate CSV defect expanded assert's error-message argument into the final column; memory reads now return exactly one numeric value. Real Lua 5.1 coroutine tests reproduce the original error and cover the correction. The native handler itself still has no hardware validation.
+
 Raw logs, dates, device identifiers, network information, firmware dumps, and private provenance records are omitted. These are summarized observations, not public hardware acceptance evidence.

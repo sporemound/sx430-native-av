@@ -17,7 +17,11 @@ end
 local f=assert(io.open('A/WFNATIVE.CSV','a'))
 local lines={}
 local function emit(s) f:write(s,'\n');f:flush();lines[#lines+1]=s end
-local function word(a) return assert(peek(a,4),'Memory read failed') end
+local function word(a)
+    local value=peek(a,4)
+    assert(type(value)=='number','Memory read failed')
+    return value
+end
 local function snapshot(phase)
     local r,v,m=get_mode()
     local pr,cc,flag,pending=word(0x3ac8),word(0x23cc),word(0x2410),word(0x2414)
@@ -28,7 +32,7 @@ function restore()
     -- No native calls or state changes in the interruption handler.
     if f then f:write('INTERRUPTED\n');f:close();f=nil end
 end
-emit('BEGIN_NATIVE_MODE_CANDIDATE,sx430is,100b,6357')
+emit('BEGIN_NATIVE_MODE_CANDIDATE_LUA51,sx430is,100b,6357')
 emit('phase,tick_ms,chdk_record,chdk_video,chdk_mode,playrec_word,cameracon_word,battery_mV,playback_flag_2410,camera_flag_2414,wifi_flag_28d4,control_word_25848,override_enabled_3d34')
 local requested=false
 local function run()
@@ -36,41 +40,46 @@ local function run()
     -- Pairing can finish while InitPB (state 9) is still settling.
     for i=1,20 do
         if cc~=9 then break end
-        assert(not r and not v and pr==3,'Unexpected playback initialization')
+        if r or v or pr~=3 then return false,'Unexpected playback initialization' end
         sleep(100)
         r,v,pr,cc,flag=snapshot('wait_initial_playback')
     end
-    assert(not r and not v and (pr==0 or pr==3) and cc==2 and flag==1,'Unexpected initial state')
-    assert(get_vbatt()>=3500,'Charge the battery before this test')
+    if r or v or (pr~=0 and pr~=3) or cc~=2 or flag~=1 then return false,'Unexpected initial state' end
+    if get_vbatt()<3500 then return false,'Charge the battery before this test' end
     sleep(300)
     r,v,pr,cc,flag=snapshot('before_request')
-    assert(not r and not v and (pr==0 or pr==3) and cc==2 and flag==1,'Initial state changed')
+    if r or v or (pr~=0 and pr~=3) or cc~=2 or flag~=1 then return false,'Initial state changed' end
     switch_mode_usb(true)
     requested=true
     sleep(100)
     r,v,pr,cc,flag=snapshot('before_native_handler')
     local transition=(cc==12 and pr==3) or (cc==8 and pr==1)
-    assert(not r and not v and transition and flag==1,'Transition guard refused native call')
+    if r or v or not transition or flag~=1 then return false,'Transition guard refused native call' end
     -- Owner ROM 0xff05f154, r0=ModeDialToCamera, r1=0.
     -- Bounded instruction execution verifies this input writes only 0x2410=0
     -- and 0x2414=1 outside its stack. No firmware subroutines are called.
     -- Return register has no success contract; verify the actual RAM result.
-    call_func_ptr(0xff05f154,0x105f,0)
+    -- Only this synchronous, non-yielding call is protected. CHDK sleep cannot
+    -- yield across pcall in its Lua 5.1 runtime.
+    local called,call_error=pcall(call_func_ptr,0xff05f154,0x105f,0)
+    if not called then return false,tostring(call_error) end
     local _,_,_,_,after,pending=snapshot('after_native_handler')
-    assert(after==0 and pending==1,'Handler result was not observed')
+    if after~=0 or pending~=1 then return false,'Handler result was not observed' end
     local consecutive,best=0,0
     for i=1,60 do
         sleep(100)
         r,v,pr,cc=snapshot('observe')
-        assert(not v,'Unexpected movie recording state')
+        if v then return false,'Unexpected movie recording state' end
         if r and pr==2 and cc==1 then consecutive=consecutive+1 else consecutive=0 end
         if consecutive>best then best=consecutive end
     end
     emit('MAX_CONSECUTIVE_RECORD_SAMPLES,'..best)
     -- At least 3 seconds, sampled at 100 ms. This is a short mode test only.
     emit('RESULT,'..(best>=30 and 'STABLE_RECORD_OBSERVED' or 'NO_STABLE_RECORD'))
+    return true
 end
-local ok,err=pcall(run)
+-- Call directly so all CHDK waits yield to the camera's script scheduler.
+local ok,err=run()
 if not ok then emit('ERROR,'..tostring(err):gsub('[\r\n]',' ')) end
 -- A mode request can finish after a refused guard. Give it time to settle,
 -- then use only the normal PTP return operation if both raw words agree.

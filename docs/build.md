@@ -46,3 +46,9 @@ The standard-library tests do not require Unicorn or a camera.
 experimental host runner using mocks. Set `SX430_PROJECT_ROOT` to this repository's
 path and run it with chdkptp's host `exec dofile(...)` from a fresh scratch directory.
 It does not connect to a camera. Keep that scratch directory outside tracked source.
+
+The optional `tests/test_camera_lua51.py` requires [Lupa](https://github.com/scoder/lupa)
+with its `lupa.lua51` module. It explicitly uses Lua 5.1 rather than LuaJIT or a newer
+Lua version. It runs 14 mocked camera scenarios with real coroutine yields,
+checks CSV column counts, and reproduces the old protected-wait error. Tests are
+skipped if that optional module is absent; inspect the test summary for skips.

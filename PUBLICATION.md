@@ -1,6 +1,6 @@
 # Public source snapshot
 
-This repository starts with new Git history and a neutral contributor identity. The initial commit uses a synthetic UTC timestamp to avoid retaining the private development timeline or local timezone.
+This repository starts with new Git history and a neutral contributor identity. Commits use synthetic UTC timestamps to avoid retaining the private development timeline or local timezone.
 
 The export includes source, tests, public upstream references, and sanitized technical summaries. It excludes private Git history, firmware dumps, firmware-derived instruction tables, raw disassembly, camera crash logs, capture files, media metadata, session timestamps, network addresses, Wi-Fi names, pairing identifiers, local usernames and machine paths, runtime configuration, and downloaded binaries.
 

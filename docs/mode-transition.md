@@ -27,3 +27,5 @@ The generated candidate requests normal PTP shooting once and calls that handler
 The experiment changes RAM through a native routine. It is not a persistent firmware patch and does not start movie recording. Concurrent scheduling, further Wi-Fi restrictions, and sustained shooting are not modeled. Stable shooting, if later observed, would still not demonstrate native video or microphone transport.
 
 Private candidate preparation passed 17 ARM checks, 14 camera-script host simulations, and 6 host-runner simulations. Host simulations used mocks. The public export provides standard-library tests and optional firmware-driven checks; it excludes the private ROM and raw execution report.
+
+The initial host mocks used newer Lua and did not suspend at waits, missing a Lua 5.1 protected-call failure. The corrected camera script calls its yielding routine directly; only the synchronous native call uses pcall. `test_camera_lua51.py` now exercises actual Lua 5.1 yields and exact 13-column rows. The first hardware script failure happened before any mode request and provides no evidence for or against the mode-handler candidate.
