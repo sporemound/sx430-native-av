@@ -1,0 +1,6 @@
+connection_id,proto,src_ip,src_port,dst_ip,dst_port,service_role,establishment_order,bytes_c2s,bytes_s2c,duration_sec,directionality
+conn-01,UDP,192.168.1.100,1900,239.255.255.250,1900,SSDP Discovery / NOTIFY,1,1248,0,1.20,Camera->Broadcast
+conn-02,UDP,192.168.1.50,5353,224.0.0.251,5353,mDNS Camera Announcement,2,864,0,0.85,Host->Multicast
+conn-03,TCP,192.168.1.50,49152,192.168.1.100,8043,UPnP Device Description HTTP,3,620,3418,0.45,Bidirectional
+conn-04,TCP,192.168.1.50,49153,192.168.1.100,15740,PTP/IP Command & Data Channel,4,48210,1482940,22.50,Bidirectional
+conn-05,TCP,192.168.1.50,49154,192.168.1.100,15740,PTP/IP Asynchronous Event Channel,5,384,2480,22.40,Bidirectional

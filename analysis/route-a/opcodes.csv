@@ -1,0 +1,10 @@
+opcode,opcode_name,calls_total,calls_during_liveview,calls_per_sec,median_payload_bytes,min_payload_bytes,max_payload_bytes,median_duration_ms,payload_type
+0x0001,InitCommandRequest,1,0,0.0,0,0,0,12.4,Connection Handshake
+0x0003,InitEventRequest,1,0,0.0,0,0,0,8.1,Event Channel Handshake
+0x1002,OpenSession,1,0,0.0,0,0,0,15.2,PTP Standard Session Control
+0x1003,CloseSession,1,0,0.0,0,0,0,14.0,PTP Standard Session Control
+0x1014,GetDevicePropDesc,1,0,0.0,128,128,128,18.5,Device Property Dataset
+0x9051,CanonStartLiveView,1,0,0.0,0,0,0,45.0,Canon LiveView State Control
+0x9052,CanonGetLiveViewPicture,40,40,13.3,38100,34800,41100,55.4,Canon Viewfinder JPEG + Meta Header
+0x9053,CanonEndLiveView,1,0,0.0,0,0,0,32.1,Canon LiveView State Control
+0x9153,CanonCheckEvent,9,8,2.7,96,64,96,8.5,Canon Status / Event Polling
