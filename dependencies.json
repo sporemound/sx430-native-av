@@ -1,0 +1,37 @@
+{
+  "git_sources": [
+    {
+      "name": "chdk",
+      "url": "https://github.com/petabyt/chdk.git",
+      "commit": "ad402e1b2049662594ccc7d15a9a507138b59079",
+      "status": "source inspected, not hardware known-good"
+    },
+    {
+      "name": "chdkptp",
+      "url": "https://github.com/simonswine/chdkptp.git",
+      "commit": "e41ce78fb1060ce57c58b834a91290680a07d932",
+      "status": "source inspected, not hardware known-good"
+    },
+    {
+      "name": "ptpip-canon-helpers",
+      "url": "https://github.com/reyalpchdk/ptpip-canon-helpers.git",
+      "commit": "7be8abc6d907aa23942e25f2d88976b887916761",
+      "status": "source inspected, not hardware known-good"
+    }
+  ],
+  "hardware_known_good_commits": [],
+  "runtime": {
+    "python": ">=3.10; standard library only for local tools",
+    "ffprobe": "optional; record installed version",
+    "ssdpy": "external dependency of the upstream pairing helper; not vendored"
+  },
+  "chdkptp_candidate": {
+    "revision": 1528,
+    "status": "r1528 playback PTP/IP communication observed in private testing; native streaming not verified",
+    "archive": "chdkptp-r1528-win-x86_64-ptpip.zip",
+    "sha256": "ceda729f0be1d79a6e5e7f4469be8ffae32e076e8fbedba8a2048a20251af856",
+    "source_archive": "chdkptp-src-1.0rc1-r1528.zip",
+    "source_sha256": "7236d731e4f0cbd91a43ecef79ea82d8ef78a977709880f5bb8703e8add6e9f5",
+    "provenance": "https://chdk.setepontos.com/d/14874-chdkptp-alternative-ptp-client-release-10-rc1"
+  }
+}

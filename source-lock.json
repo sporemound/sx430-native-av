@@ -1,0 +1,160 @@
+{
+  "hardware_verified": false,
+  "files": [
+    {
+      "path": "reference/chdk/trunk/COPYING",
+      "sha256": "e55f40e907647a4ae74b6f9cf10dd72ac9996c5d2b227d8e226e7154a85b531d",
+      "source": "https://github.com/petabyt/chdk/blob/ad402e1b2049662594ccc7d15a9a507138b59079/trunk/COPYING"
+    },
+    {
+      "path": "reference/chdk/trunk/platform/sx430is/notes.txt",
+      "sha256": "08785caf9760417554a8a6fc2dd7fbe13f0c0d2088cfd3dffc343a7311aba306",
+      "source": "https://github.com/petabyt/chdk/blob/ad402e1b2049662594ccc7d15a9a507138b59079/trunk/platform/sx430is/notes.txt"
+    },
+    {
+      "path": "reference/chdk/trunk/platform/sx430is/platform_camera.h",
+      "sha256": "ac3f2fb5bbdae93cdf2fd8cb29b2342f06da9ac67fd202e9dc3625391e289eef",
+      "source": "https://github.com/petabyt/chdk/blob/ad402e1b2049662594ccc7d15a9a507138b59079/trunk/platform/sx430is/platform_camera.h"
+    },
+    {
+      "path": "reference/chdk/trunk/platform/sx430is/lib.c",
+      "sha256": "b18a59b0d69e5d70318babf1d1dfc0ae3b745fcd981a65f964baeaf6081fa164",
+      "source": "https://github.com/petabyt/chdk/blob/ad402e1b2049662594ccc7d15a9a507138b59079/trunk/platform/sx430is/lib.c"
+    },
+    {
+      "path": "reference/chdk/trunk/platform/sx430is/sub/taskhook.S",
+      "sha256": "6a019ec17eb4607bd2884165efae5f277d71b09130e43620b813d0283f3a5ec0",
+      "source": "https://github.com/petabyt/chdk/blob/ad402e1b2049662594ccc7d15a9a507138b59079/trunk/platform/sx430is/sub/taskhook.S"
+    },
+    {
+      "path": "reference/chdk/trunk/platform/sx430is/sub/100b/boot.c",
+      "sha256": "8f4aeb95ca18ecaab0814eca145b3f8b3914f79106523712df0a0e28329b62db",
+      "source": "https://github.com/petabyt/chdk/blob/ad402e1b2049662594ccc7d15a9a507138b59079/trunk/platform/sx430is/sub/100b/boot.c"
+    },
+    {
+      "path": "reference/chdk/trunk/platform/sx430is/sub/100b/code_gen.txt",
+      "sha256": "e0ca349bf37dacec01d74fd6b6b287223493b95a57f8c8cd2cc995a4c78e9a3e",
+      "source": "https://github.com/petabyt/chdk/blob/ad402e1b2049662594ccc7d15a9a507138b59079/trunk/platform/sx430is/sub/100b/code_gen.txt"
+    },
+    {
+      "path": "reference/chdk/trunk/platform/sx430is/sub/100b/stubs_entry.S",
+      "sha256": "66cbedc9f732563961b2a4243d3788cc1bb5abd27d3524a57265b2cc841aeafb",
+      "source": "https://github.com/petabyt/chdk/blob/ad402e1b2049662594ccc7d15a9a507138b59079/trunk/platform/sx430is/sub/100b/stubs_entry.S"
+    },
+    {
+      "path": "reference/chdk/trunk/platform/sx430is/sub/100b/stubs_entry_2.S",
+      "sha256": "37d6b9ff601532a3ea8018f70f26dee53192a3a77eecab4b8bb94ec1fa49eb10",
+      "source": "https://github.com/petabyt/chdk/blob/ad402e1b2049662594ccc7d15a9a507138b59079/trunk/platform/sx430is/sub/100b/stubs_entry_2.S"
+    },
+    {
+      "path": "reference/chdk/trunk/platform/sx430is/sub/100b/stubs_min.S",
+      "sha256": "ffe71a1d7bbb3ca9aa55d31afd9fb7d5a3d2dddb341c02563165c4fa5d83d276",
+      "source": "https://github.com/petabyt/chdk/blob/ad402e1b2049662594ccc7d15a9a507138b59079/trunk/platform/sx430is/sub/100b/stubs_min.S"
+    },
+    {
+      "path": "reference/chdk/trunk/platform/sx430is/sub/100b/firmware_crc_data.h",
+      "sha256": "b6d07ae45c41113866c393504927d4c236f8d14b2622ed94cd705e9e2db7a8ff",
+      "source": "https://github.com/petabyt/chdk/blob/ad402e1b2049662594ccc7d15a9a507138b59079/trunk/platform/sx430is/sub/100b/firmware_crc_data.h"
+    },
+    {
+      "path": "reference/chdk/trunk/platform/sx430is/sub/100b/funcs_by_name.csv",
+      "sha256": "d8285278e10d786f8a4552a7a0220ef2750190174c8f9e744b708323c9d3b0c3",
+      "source": "https://github.com/petabyt/chdk/blob/ad402e1b2049662594ccc7d15a9a507138b59079/trunk/platform/sx430is/sub/100b/funcs_by_name.csv"
+    },
+    {
+      "path": "reference/chdk/trunk/platform/sx430is/sub/100b/makefile.inc",
+      "sha256": "dcb343a809f90cd02a7f53554669f56db14411ce0fc9d035b00c54591c90b8f0",
+      "source": "https://github.com/petabyt/chdk/blob/ad402e1b2049662594ccc7d15a9a507138b59079/trunk/platform/sx430is/sub/100b/makefile.inc"
+    },
+    {
+      "path": "reference/chdk/trunk/platform/sx420is/sub/100a/stubs_entry.S",
+      "sha256": "aa77f177e33b3a190d01d325e115144410179154bb32bf91602919c3af32902b",
+      "source": "https://github.com/petabyt/chdk/blob/ad402e1b2049662594ccc7d15a9a507138b59079/trunk/platform/sx420is/sub/100a/stubs_entry.S"
+    },
+    {
+      "path": "reference/chdk/trunk/platform/sx410is/sub/100c/stubs_entry.S",
+      "sha256": "169155acfa1deb0dd12d234e484f788244673a8bc818d16afa0eb9ac7efbee1f",
+      "source": "https://github.com/petabyt/chdk/blob/ad402e1b2049662594ccc7d15a9a507138b59079/trunk/platform/sx410is/sub/100c/stubs_entry.S"
+    },
+    {
+      "path": "reference/chdk/trunk/platform/sx410is/sub/100c/movie_rec.c",
+      "sha256": "58cd826dc2196a46660ef96803a20358b152bdba4086947df4d0e9a3588ece71",
+      "source": "https://github.com/petabyt/chdk/blob/ad402e1b2049662594ccc7d15a9a507138b59079/trunk/platform/sx410is/sub/100c/movie_rec.c"
+    },
+    {
+      "path": "reference/chdk/trunk/platform/sx400is/sub/100b/stubs_entry.S",
+      "sha256": "c264a10483b9e6314f7969368805eaf81827e037ad78a9f947ede37f0e11066b",
+      "source": "https://github.com/petabyt/chdk/blob/ad402e1b2049662594ccc7d15a9a507138b59079/trunk/platform/sx400is/sub/100b/stubs_entry.S"
+    },
+    {
+      "path": "reference/chdk/trunk/platform/sx400is/sub/100b/movie_rec.c",
+      "sha256": "89d7ce2c91447b8eb0d09d2ef00a6538bd80156617c8f80b2a5c74bb55a2f133",
+      "source": "https://github.com/petabyt/chdk/blob/ad402e1b2049662594ccc7d15a9a507138b59079/trunk/platform/sx400is/sub/100b/movie_rec.c"
+    },
+    {
+      "path": "reference/chdk/trunk/platform/ixus175_elph180/sub/100c/stubs_entry.S",
+      "sha256": "750f7ebb111e05ce41983f93bf010f268c300c3ba0278069e47acc8dbd460846",
+      "source": "https://github.com/petabyt/chdk/blob/ad402e1b2049662594ccc7d15a9a507138b59079/trunk/platform/ixus175_elph180/sub/100c/stubs_entry.S"
+    },
+    {
+      "path": "reference/chdk/trunk/platform/ixus175_elph180/sub/100c/movie_rec.c",
+      "sha256": "2fa5e3d80e459aaecfb171d3ce9e4c1b538b9be5b25855480994cdcff2099b16",
+      "source": "https://github.com/petabyt/chdk/blob/ad402e1b2049662594ccc7d15a9a507138b59079/trunk/platform/ixus175_elph180/sub/100c/movie_rec.c"
+    },
+    {
+      "path": "reference/chdk/trunk/core/ptp.h",
+      "sha256": "394a745d3d67c070f2922d1f4409d1c39461ead2bd4598076ae9768f86c42ebc",
+      "source": "https://github.com/petabyt/chdk/blob/ad402e1b2049662594ccc7d15a9a507138b59079/trunk/core/ptp.h"
+    },
+    {
+      "path": "reference/chdk/trunk/core/live_view.h",
+      "sha256": "15f170e37faaa0e7fa28bed0da7024e235d63c8179fc94a1e176f23294093c1e",
+      "source": "https://github.com/petabyt/chdk/blob/ad402e1b2049662594ccc7d15a9a507138b59079/trunk/core/live_view.h"
+    },
+    {
+      "path": "reference/chdk/trunk/platform/generic/filewrite.c",
+      "sha256": "194af2cdddf7cefea523915bd37789134b3ef5038ae384a34cda08e5fecc6b6d",
+      "source": "https://github.com/petabyt/chdk/blob/ad402e1b2049662594ccc7d15a9a507138b59079/trunk/platform/generic/filewrite.c"
+    },
+    {
+      "path": "reference/chdkptp/lua/chdku.lua",
+      "sha256": "5e3a0488d4dff46332ef886368832b569925f120b3669ec848ce6dcc0ac6d55a",
+      "source": "https://github.com/simonswine/chdkptp/blob/e41ce78fb1060ce57c58b834a91290680a07d932/lua/chdku.lua"
+    },
+    {
+      "path": "reference/chdkptp/lua/cli.lua",
+      "sha256": "c5837ebc5ab9e2a29b3569f90ec2366060bd04093ff91e160079e61ca14e22a5",
+      "source": "https://github.com/simonswine/chdkptp/blob/e41ce78fb1060ce57c58b834a91290680a07d932/lua/cli.lua"
+    },
+    {
+      "path": "reference/chdkptp/lua/ustime.lua",
+      "sha256": "e3cf22fb8ac439b0d50bf21ccc44fbafde37033ff190b90f851e3c1086f81f12",
+      "source": "https://github.com/simonswine/chdkptp/blob/e41ce78fb1060ce57c58b834a91290680a07d932/lua/ustime.lua"
+    },
+    {
+      "path": "reference/chdkptp/README.TXT",
+      "sha256": "f6b0d405708868a7e0c87408d905175fa2b0b1030c5cfef6a5d7a303e5fcb37e",
+      "source": "https://github.com/simonswine/chdkptp/blob/e41ce78fb1060ce57c58b834a91290680a07d932/README.TXT"
+    },
+    {
+      "path": "reference/ptpip-canon-helpers/LICENSE",
+      "sha256": "16c08fbfb9be436a2f91628f37671629ff1aaaf672ddd1db4b1dbd7e903e0452",
+      "source": "https://github.com/reyalpchdk/ptpip-canon-helpers/blob/7be8abc6d907aa23942e25f2d88976b887916761/LICENSE"
+    },
+    {
+      "path": "reference/ptpip-canon-helpers/README.md",
+      "sha256": "a3fd85356e1132b37914895175db1a650e4c415c591de2873afcca1c8f05e827",
+      "source": "https://github.com/reyalpchdk/ptpip-canon-helpers/blob/7be8abc6d907aa23942e25f2d88976b887916761/README.md"
+    },
+    {
+      "path": "reference/ptpip-canon-helpers/ptpip-canon-upnp-helper.py",
+      "sha256": "ee40ae989032a1edba563e6188aa809469fed82346b89152203415e70fd260d4",
+      "source": "https://github.com/reyalpchdk/ptpip-canon-helpers/blob/7be8abc6d907aa23942e25f2d88976b887916761/ptpip-canon-upnp-helper.py"
+    },
+    {
+      "path": "reference/ptpip-canon-helpers/ptpip-canon-desc-helper.py",
+      "sha256": "d8d4b342a08df225535732a09f77ecaee7bb364f0960a0abbb9a4a95b467d0d4",
+      "source": "https://github.com/reyalpchdk/ptpip-canon-helpers/blob/7be8abc6d907aa23942e25f2d88976b887916761/ptpip-canon-desc-helper.py"
+    }
+  ]
+}
