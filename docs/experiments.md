@@ -8,7 +8,7 @@
 | H02 | PTP/IP viewport baseline | PARTIAL | packet transfer observed; changing live image not established |
 | H03 | Exact-ROM movie/audio mapping | PARTIAL | mode-transition.md; encoder and audio buffer ownership unresolved |
 | H04 | Normal local recording, passive samples | NOT RUN | valid camera H.264 and AAC samples with recorded provenance |
-| H05 | Movie plus Wi-Fi coexistence | BLOCKED BY MODE REVERSAL | ordinary shooting reversed; direct-handler candidate untested |
+| H05 | Movie plus Wi-Fi coexistence | SHOOTING PREREQUISITE PASSED BRIEFLY | corrected handler maintained short shooting interval; movie/audio coexistence untested |
 | H06 | No SD readback; transport comparison | NOT RUN | identical source stream, measured sockets/PTP-IP comparison |
 | H07 | Receiver and OBS | NOT RUN | both camera streams, preserved timing, no substitute devices |
 | H08 | 30-minute acceptance | NOT RUN | sync, latency, loss, memory, thermal, stop/start evidence |

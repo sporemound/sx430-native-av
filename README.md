@@ -9,7 +9,7 @@ Research tools for the Canon PowerShot SX430 IS, firmware **GM1.00B**. The targe
 - Firmware identity and CRC verification, CHDK boot, offline shooting, and PTP/IP communication have been demonstrated during private testing.
 - Stock shooting requests over Wi-Fi caused a return to playback. A normal ModeDialToCamera event did not maintain shooting.
 - Bounded ARM execution reproduced an upstream event translation and verified the mode pre-handler's two RAM writes for selected inputs.
-- A guarded direct-handler candidate is prepared but **has not been tested on a camera**. Concurrent camera behavior remains unresolved.
+- The corrected guarded direct-handler candidate passed a short hardware trial: 50 agreeing shooting samples spanning over five seconds, followed by deliberate return to playback. Sustained coexistence and independent PTP responsiveness during shooting remain unresolved.
 - Encoder buffers, microphone extraction, sustained transport, synchronization, and OBS integration remain future work.
 
 See [research status](docs/hardware-progress.md), [mode investigation](docs/mode-transition.md), and [experiment ledger](docs/experiments.md). Raw camera evidence and firmware are excluded. Hardware observations here are summaries, not independently reproducible public capture records.

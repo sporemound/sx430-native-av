@@ -10,8 +10,10 @@ An earlier offline diagnostic requested playback while already in playback and p
 
 A CHDK display packet transferred over Wi-Fi but contained no demonstrated live sensor image. No native encoded video or microphone stream was captured.
 
-The direct-handler candidate in [mode-transition.md](mode-transition.md) has passed offline checks and remains untested on hardware. Native encoder access, AAC extraction, sustained throughput, timing, and OBS support remain unimplemented or unverified.
+The corrected direct-handler candidate in [mode-transition.md](mode-transition.md) passed a short hardware trial. The two request flags changed as expected, followed by 50 consecutive samples agreeing on shooting across CHDK and both raw mode words. These samples span over five seconds. Deliberate cleanup returned the camera to playback, and the host received the complete log before disconnecting. Native encoder access, AAC extraction, sustained throughput, timing, and OBS support remain unimplemented or unverified.
 
-The first candidate script attempt stopped at its first wait, before requesting shooting or invoking the native handler. Lua 5.1 rejected a yield across `pcall(run)`. The corrected script keeps waits outside protected calls and returns expected guard failures explicitly. A separate CSV defect expanded assert's error-message argument into the final column; memory reads now return exactly one numeric value. Real Lua 5.1 coroutine tests reproduce the original error and cover the correction. The native handler itself still has no hardware validation.
+The first candidate script attempt stopped at its first wait, before requesting shooting or invoking the native handler. Lua 5.1 rejected a yield across `pcall(run)`. The corrected script keeps waits outside protected calls and returns expected guard failures explicitly. A separate CSV defect expanded assert's error-message argument into the final column; memory reads now return exactly one numeric value. Real Lua 5.1 coroutine tests reproduce the original error and cover the correction.
+
+During the successful trial the host waited for one camera-side script and received its log after cleanup. Independent PTP requests and live-frame retrieval while shooting were not measured. The short success therefore establishes a mode transition during an open session, not sustained native streaming.
 
 Raw logs, dates, device identifiers, network information, firmware dumps, and private provenance records are omitted. These are summarized observations, not public hardware acceptance evidence.

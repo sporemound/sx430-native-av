@@ -29,3 +29,9 @@ The experiment changes RAM through a native routine. It is not a persistent firm
 Private candidate preparation passed 17 ARM checks, 14 camera-script host simulations, and 6 host-runner simulations. Host simulations used mocks. The public export provides standard-library tests and optional firmware-driven checks; it excludes the private ROM and raw execution report.
 
 The initial host mocks used newer Lua and did not suspend at waits, missing a Lua 5.1 protected-call failure. The corrected camera script calls its yielding routine directly; only the synchronous native call uses pcall. `test_camera_lua51.py` now exercises actual Lua 5.1 yields and exact 13-column rows. The first hardware script failure happened before any mode request and provides no evidence for or against the mode-handler candidate.
+
+## Corrected hardware trial
+
+The corrected handler changed the two flags from 1/0 to 0/1. The camera then maintained CHDK record=true, playrec=2, and CameraCon=1 for 50 consecutive samples spanning over five seconds. The script returned it to playback deliberately and delivered a complete result before host disconnect. This supports the targeted short mode correction on the tested firmware/build combination.
+
+The host did not issue separate image or status requests while the camera was in shooting; it received the camera script's complete response after cleanup. Live sensor image transfer, native encoded video, microphone AAC, movie/Wi-Fi coexistence, and sustained duration remain separate acceptance gates. Raw session data stays private.

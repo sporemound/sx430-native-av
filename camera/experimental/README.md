@@ -1,4 +1,6 @@
-# Direct mode-handler candidate — unverified on hardware
+# Direct mode-handler candidate — short trial passed
+
+The corrected candidate maintained shooting for 50 consecutive samples spanning over five seconds during an open PTP/IP session, then returned to playback deliberately. This is a short mode-transition result; independent PTP requests during shooting, live-frame delivery, sustained operation, and native video/audio streaming remain unverified.
 
 Research experiment for SX430 IS firmware GM1.00B and CHDK revision 6357. Read [the limitations](../../docs/mode-transition.md) first. The template contains no firmware table and refuses to execute until generated from a locally verified dump.
 
