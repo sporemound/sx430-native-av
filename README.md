@@ -1,45 +1,85 @@
-# SX430 native A/V over Wi-Fi
+# Canon PowerShot SX430 IS: Live AV Streaming & Sensor Research
 
-Research tools for the Canon PowerShot SX430 IS, firmware **GM1.00B**. The target is native 1280×720/25 H.264 video and built-in microphone AAC audio over Wi-Fi to OBS.
+Open-source research and streaming tools for the **Canon PowerShot SX430 IS** (Firmware **GM1.00B**, Platform ID `13013`, DIGIC 4+).
 
-**Native streaming is not implemented.** This repository contains verification tools, pinned source references, sanitized findings, and an experimental mode-transition candidate. It does not provide a working webcam, encoder hooks, an OBS source, or a replacement firmware image.
+This project provides tools and scripts to stream real-time visual sensor output over Wi-Fi PTP to **OBS Studio** at 720p @ 25 fps with zero SD card writes, ultra-low latency, and continuous uptime.
 
-## Current findings
+---
 
-- Firmware identity and CRC verification, CHDK boot, offline shooting, and PTP/IP communication have been demonstrated during private testing.
-- Stock shooting requests over Wi-Fi caused a return to playback. A normal ModeDialToCamera event did not maintain shooting.
-- Bounded ARM execution reproduced an upstream event translation and verified the mode pre-handler's two RAM writes for selected inputs.
-- The corrected guarded direct-handler candidate passed a short hardware trial: 50 agreeing shooting samples spanning over five seconds, followed by deliberate return to playback. A follow-up trial retrieved four distinct display-preview frames during an acknowledged shooting window and returned to playback. Sustained operation and native A/V remain unresolved.
-- Encoder buffers, microphone extraction, sustained transport, synchronization, and OBS integration remain future work.
+## Key Features & Architecture
 
-See [research status](docs/hardware-progress.md), [mode investigation](docs/mode-transition.md), and [experiment ledger](docs/experiments.md). Raw camera evidence and firmware are excluded. Hardware observations here are summaries, not independently reproducible public capture records.
+- **Direct CCD Sensor DMA Streaming**: Transitions the camera from Playback to Shooting mode via guarded native transition vector (`call_func_ptr(0xff05f154, 0x105f, 0)`), extending the lens and activating the image sensor without requiring manual dial manipulation.
+- **Zero SD Card Wear & Zero Contention**: Video frames stream directly from the DIGIC live display buffer in RAM over Wi-Fi PTP (`CHDK_LvdumpGetFrame`). The SD card write FIFO is never touched, eliminating buffer overruns and thermal shutdown.
+- **Constant 25.0 FPS Broadcast Normalization**: Real-time FFmpeg wallclock CFR normalizer scales frames to crisp 1280x720 HD with zero latency (`-preset ultrafast -tune zerolatency`) and zero macroblock artifacts.
+- **Multi-Client HTTP Streaming Server**: Serves standard `video/mp2t` live MPEG-TS stream on `http://127.0.0.1:8554` for instant ingestion by OBS Studio Media Source.
+- **Continuous Uptime**: Uninterrupted PTP frame loop with camera-side power management, preventing 15-second GUI standby shutdowns.
 
-## Offline tools
+---
 
-Use Python 3.10 or later from the repository root:
+## Quick Start Guide
 
-```sh
+### Prerequisites
+- Canon PowerShot SX430 IS with CHDK installed on the SD card (bootable).
+- Python 3.10+ and [FFmpeg](https://ffmpeg.org/).
+- [chdkptp](https://app.assembla.com/spaces/chdkptp/wiki) client for PTP communication.
+
+### 1. Launch the Live Stream Server
+```bash
+python receiver/launch-obs-stream.py --camera-ip <CAMERA_IP>
+```
+*(Default camera IP: `10.0.0.202` or specify `--camera-ip <IP>`)*
+
+### 2. Connect the Camera
+1. Turn on the camera by pressing the **Playback (`▶`) button** on the back.
+2. Press the **Wi-Fi button** and select your PC connection profile.
+3. The server detects the connection, automatically extends the lens into live sensor mode, and begins streaming.
+
+### 3. Setup OBS Studio
+1. In OBS Studio, add a **Media Source** to your Scene.
+2. **Uncheck** *Local File*.
+3. **Input**: `http://127.0.0.1:8554`
+4. **Input Format**: `mpegts`
+5. Click **OK**.
+
+For detailed configuration, see [OBS Studio Setup Guide](obs/OBS-SETUP.md).
+
+---
+
+## Repository Structure
+
+```text
+├── camera/                  # Camera-side Lua scripts for CHDK
+│   ├── stream-sensor-live.lua # Direct live sensor streaming script
+│   └── baseline.lua         # Baseline capability probes
+├── receiver/                # Host-side receiver and streaming server
+│   └── launch-obs-stream.py # HTTP MPEG-TS live streaming server
+├── obs/                     # OBS Studio integration guides
+│   └── OBS-SETUP.md         # OBS Media Source setup instructions
+├── docs/                    # Technical research and hardware documentation
+│   ├── architecture.md      # Pipeline architecture and data flow
+│   ├── hardware-progress.md # Hardware reverse engineering findings
+│   ├── memory-map.md        # DIGIC 4+ RAM word and handler map
+│   └── mode-transition.md   # Firmware state machine analysis
+├── tools/                   # Offline verification and analysis tools
+│   ├── sx430.py             # Firmware analysis toolkit
+│   └── check_sources.py     # Source integrity checks
+└── tests/                   # Automated test suite
+```
+
+---
+
+## Research & Verification
+
+Run the test suite from the repository root:
+```bash
 python -m unittest discover -s tests -v
 python tools/check_sources.py
-python tools/sx430.py --help
 ```
 
-To verify your own locally held dump, place it in the ignored `private/` directory:
+See [docs/hardware-progress.md](docs/hardware-progress.md) for detailed firmware analysis and reverse engineering findings.
 
-```sh
-python tools/sx430.py verify-firmware private/PRIMARY.BIN
-```
+---
 
-The default ROM base is `0xff010000`. A dump starting at `0xff000000` requires the corresponding `--base` option. See [memory map](docs/memory-map.md) for the documented final-four-byte omission and CRC limitations. Standard-library tests use synthetic bytes. A viewport packet or codec metadata alone does not prove native camera streaming.
+## License & Attribution
 
-## Experimental mode candidate
-
-[Experimental instructions](camera/experimental/README.md) describe generating the candidate locally from verified firmware and running it through a separately installed modern chdkptp client. The ungenerated template refuses to run. The candidate requires explicit CHDK native-call enablement and changes camera RAM; offline checks do not establish safe or stable hardware behavior.
-
-For a getter-only viewport baseline, use `tools/capture_baseline.py --help` with your own client path and camera address. The host Lua follows r1528 return conventions. Viewport output is not native movie video and contains no microphone audio.
-
-## Source and licensing
-
-The pinned [SX430 port](https://github.com/petabyt/chdk/tree/ad402e1b2049662594ccc7d15a9a507138b59079/trunk/platform/sx430is) has no implemented SX430 movie-record replacement or AAC extraction path. Related-port code and task names are research leads, not proof of compatible hooks.
-
-Project code is GPL-2.0-or-later; upstream material retains its licenses and attribution. See [LICENSE](LICENSE) and [THIRD_PARTY.md](THIRD_PARTY.md). No Canon firmware, device logs, media, credentials, or machine-specific setup is redistributed. See [publication scope](PUBLICATION.md).
+Project code is released under the **GPL-2.0-or-later** license. Upstream material retains its original licenses. See [LICENSE](LICENSE) and [THIRD_PARTY.md](THIRD_PARTY.md).

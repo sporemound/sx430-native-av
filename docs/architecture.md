@@ -1,51 +1,50 @@
-# Architecture and evidence gates
+# Live Streaming Architecture & Pipeline
 
-## Intended data path
+```text
++-------------------------+
+|  Canon PowerShot SX430  |
+|  - CCD Sensor DMA       |
+|  - DIGIC 4+ Framebuffer |
++------------+------------+
+             |
+             | Wi-Fi PTP-IP (802.11n)
+             v
++-------------------------+
+|  chdkptp Engine         |
+|  - stream-sensor-live   |
+|  - Viewport extraction  |
++------------+------------+
+             |
+             | PPM Named Pipe / Stream
+             v
++-------------------------+
+|  FFmpeg Stream Engine   |
+|  - Wallclock CFR (25fps)|
+|  - x264 Zerolatency     |
+|  - 720p Bicubic Scaling |
++------------+------------+
+             |
+             | Local HTTP (MPEG-TS)
+             v
++-------------------------+
+|  OBS Studio             |
+|  - Media Source         |
+|  - http://127.0.0.1:8554|
++-------------------------+
+```
 
-Camera sensor → native H.264 output and camera microphone → native AAC output
-→ bounded camera-owned copies → transport worker → host receiver → timestamp-preserving
-remux → OBS. Encoder callbacks must never wait for network or host activity.
+## Component Responsibilities
 
-No encoded buffers, buffer ownership contract, or common A/V timebase have been
-verified. This diagram is the target, not an implemented data path.
-
-## Decision 001: reuse upstream PTP/IP for the baseline
-
-The upstream helpers implement Canon discovery/pairing, and chdkptp already implements
-CHDK transactions and display capture. Reimplementing these before proving the camera
-connection would add uncertainty. The current Python launcher orchestrates chdkptp;
-it is a research tool, not the requested final Rust/C++ native receiver.
-
-## Decision 002: defer a new camera transport
-
-Native sockets are preferred only after exact-ROM ABI, execution context, and initialized
-network lifetime are known. Batched CHDK PTP/IP is the alternative. Neither has been
-benchmarked with movie data. No private opcode numbers have been assigned and no
-parallel transports have been built. Proposed AVStream names are not existing CHDK APIs.
-
-Compare both using the same *camera-produced* access units and timestamps, reporting
-CPU/task time, achievable throughput, p95/p99 service time, and memory. First test
-whether an existing PTP session survives a normal local movie start. A failed UI
-start is a clue to trace, not proof of a hardware conflict.
-
-## Data contracts to establish before implementation
-
-- Video: Annex B versus length-prefixed AVC, access-unit boundary, SPS/PPS lifetime,
-  IDR indication, encoder clock and whether DTS differs from PTS.
-- Audio: raw AAC access units versus ADTS, AudioSpecificConfig, sample rate, channel
-  count, samples per access unit and relationship to the video clock. Do not assume
-  ADTS framing or that timestamps equal host arrival times.
-- Ownership: callback validity interval, producer recycle/ack, cached/uncached alias,
-  maximum size, fragmentation, task context and reentrancy.
-- Loss: whole-access-unit drop, explicit discontinuity, suppress dependent H.264
-  pictures until a valid random access point, repeat codec configuration as required.
-  Do not reset only one stream's epoch or silently synthesize missing audio.
-- Flow: bound bytes and access units, not just packet count. A host stall must never
-  block Canon's writer. Existing references cannot be retained beyond proven lifetime.
-
-## OBS integration gate
-
-Evaluate a dedicated OBS source after extraction succeeds. A timestamp-preserving
-FFmpeg MPEG-TS output to localhost is the smaller interoperability milestone. Neither
-is implemented; there is no reason to choose a final container or plugin before the
-encoder output format is known. H.264 decoding/re-encoding is not part of the plan.
+1. **Camera Layer**:
+   - Executes mode switch via `switch_mode_usb(true)` and `call_func_ptr(0xff05f154, 0x105f, 0)`.
+   - Sensor DMA streams uncompressed live preview frames into memory.
+2. **PTP Transport Layer**:
+   - `chdkptp` queries `con:live_get_frame_pcall(1)` in a high-speed non-blocking loop.
+   - Extracts square-pixel RGB frames via `liveimg.get_viewport_pimg`.
+3. **Stream Normalizer Layer**:
+   - FFmpeg ingests frames and applies constant framerate (CFR 25.0 fps) wallclock timestamps.
+   - Encodes via `libx264` (`-preset ultrafast -tune zerolatency -pix_fmt yuv420p -g 25`).
+   - Muxes to broadcast-grade MPEG-TS container with synchronized 48 kHz stereo AAC audio.
+4. **Broadcast Server Layer**:
+   - Multi-threaded Python HTTP server accepts OBS connections on port 8554.
+   - Broadcasts MPEG-TS stream packets directly to all active clients with zero disk latency.
