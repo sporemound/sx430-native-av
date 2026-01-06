@@ -1,82 +1,72 @@
-# Canon PowerShot SX430 IS: Live AV Streaming & Sensor Research
+# Canon PowerShot SX430 IS: Live AV & Sensor Research
 
-Open-source research and streaming tools for the **Canon PowerShot SX430 IS** (Firmware **GM1.00B**, Platform ID `13013`, DIGIC 4+).
-
-This project provides tools and scripts to stream real-time visual sensor output over Wi-Fi PTP to **OBS Studio** at 720p @ 25 fps with zero SD card writes, ultra-low latency, and continuous uptime.
+Research tools and experimental live streaming infrastructure for the **Canon PowerShot SX430 IS** (Firmware **GM1.00B**, Platform ID `13013`, DIGIC 4+).
 
 ---
 
-## Key Features & Architecture
+## Current Status & Real-World Performance
 
-- **Direct CCD Sensor DMA Streaming**: Transitions the camera from Playback to Shooting mode via guarded native transition vector (`call_func_ptr(0xff05f154, 0x105f, 0)`), extending the lens and activating the image sensor without requiring manual dial manipulation.
-- **Zero SD Card Wear & Zero Contention**: Video frames stream directly from the DIGIC live display buffer in RAM over Wi-Fi PTP (`CHDK_LvdumpGetFrame`). The SD card write FIFO is never touched, eliminating buffer overruns and thermal shutdown.
-- **Constant 25.0 FPS Broadcast Normalization**: Real-time FFmpeg wallclock CFR normalizer scales frames to crisp 1280x720 HD with zero latency (`-preset ultrafast -tune zerolatency`) and zero macroblock artifacts.
-- **Multi-Client HTTP Streaming Server**: Serves standard `video/mp2t` live MPEG-TS stream on `http://127.0.0.1:8554` for instant ingestion by OBS Studio Media Source.
-- **Continuous Uptime**: Uninterrupted PTP frame loop with camera-side power management, preventing 15-second GUI standby shutdowns.
+> [!WARNING]
+> **Performance Notice**: The current uncompressed liveview preview over Wi-Fi PTP operates at **low framerate (~2–5 fps)** with latency due to the uncompressed transfer size (~345 KB/frame) over the camera's low-power Wi-Fi interface. Native 1280x720 @ 25 fps hardware H.264 stream extraction without SD card write exhaustion remains an active area of research.
+
+| Stream Mechanism | Resolution | Real-World Framerate | SD Card Writes | Latency | Status |
+|---|---|---|---|---|---|
+| **Direct Sensor LiveView** | 720x240 (Scaled to 720p) | ~2–5 fps | **Zero (0 bytes)** | ~200–500 ms | **Functional Baseline** |
+| **Native DIGIC 4+ H.264** | 1280x720 | 25.0 fps (Target) | Exceeds buffer in ~14s | ~60–100 ms | **Research Target** |
 
 ---
 
-## Quick Start Guide
+## Validated Capabilities
 
-### Prerequisites
-- Canon PowerShot SX430 IS with CHDK installed on the SD card (bootable).
-- Python 3.10+ and [FFmpeg](https://ffmpeg.org/).
-- [chdkptp](https://app.assembla.com/spaces/chdkptp/wiki) client for PTP communication.
+- **Guarded Shooting Mode Transition**: Successfully switches from Playback to Shooting mode via native transition vector (`call_func_ptr(0xff05f154, 0x105f, 0)`), extending the lens and activating live CCD sensor DMA over Wi-Fi without manual dial manipulation.
+- **Zero SD Card Wear**: In live sensor mode, frames are extracted directly from the DIGIC display framebuffer in RAM over PTP-IP. No video files or MP4 containers are written to the SD card.
+- **Local HTTP MPEG-TS Server**: Serves live stream on `http://127.0.0.1:8554` for OBS Studio Media Source ingestion.
+- **FFmpeg Frame Normalizer**: Scales the incoming sensor frames and provides a consistent MPEG-TS container for OBS Studio.
 
-### 1. Launch the Live Stream Server
+---
+
+## Technical Bottleneck Analysis
+
+1. **Why Uncompressed Viewport is ~2–5 FPS**:
+   - Each uncompressed $720 \times 240$ YUV422 viewport buffer is $\approx 345\,\text{KB}$.
+   - Over standard 802.11n IoT Wi-Fi on the camera, each PTP request-response roundtrip requires 150–300 ms, physically capping uncompressed throughput to 2–5 fps ($345\,\text{KB} \times 25\,\text{fps} = 8.6\,\text{MB/s}$ or 69 Mbps, which exceeds the camera's Wi-Fi radio capacity).
+2. **Why Native H.264 Movie Mode Halts**:
+   - The DIGIC 4+ hardware H.264 encoder outputs 1280x720 @ 25 fps at ~15–30 KB/frame (3–6 Mbps, easily fitting within Wi-Fi bandwidth).
+   - However, stock movie recording concurrently commits an MP4 container to the SD card. Under concurrent network DMA, the SD card write FIFO overflows after $\approx 14$ seconds, halting recording (`playrec = 5`).
+   - Decoupling the hardware H.264 encoder from the SD card filesystem write task is the primary goal of ongoing firmware research.
+
+---
+
+## Running the Baseline Stream
+
+### 1. Start the Stream Server
 ```bash
 python receiver/launch-obs-stream.py --camera-ip <CAMERA_IP>
 ```
-*(Default camera IP: `10.0.0.202` or specify `--camera-ip <IP>`)*
 
 ### 2. Connect the Camera
-1. Turn on the camera by pressing the **Playback (`▶`) button** on the back.
+1. Turn on the camera using the **Playback (`▶`) button**.
 2. Press the **Wi-Fi button** and select your PC connection profile.
-3. The server detects the connection, automatically extends the lens into live sensor mode, and begins streaming.
+3. The server detects the camera, automatically switches to sensor mode, and begins streaming.
 
-### 3. Setup OBS Studio
-1. In OBS Studio, add a **Media Source** to your Scene.
-2. **Uncheck** *Local File*.
-3. **Input**: `http://127.0.0.1:8554`
-4. **Input Format**: `mpegts`
-5. Click **OK**.
+### 3. OBS Studio Configuration
+- Add a **Media Source** in OBS Studio.
+- **Uncheck** *Local File*.
+- **Input**: `http://127.0.0.1:8554`
+- **Input Format**: `mpegts`
+- Click **OK**.
 
-For detailed configuration, see [OBS Studio Setup Guide](obs/OBS-SETUP.md).
-
----
-
-## Repository Structure
-
-```text
-├── camera/                  # Camera-side Lua scripts for CHDK
-│   ├── stream-sensor-live.lua # Direct live sensor streaming script
-│   └── baseline.lua         # Baseline capability probes
-├── receiver/                # Host-side receiver and streaming server
-│   └── launch-obs-stream.py # HTTP MPEG-TS live streaming server
-├── obs/                     # OBS Studio integration guides
-│   └── OBS-SETUP.md         # OBS Media Source setup instructions
-├── docs/                    # Technical research and hardware documentation
-│   ├── architecture.md      # Pipeline architecture and data flow
-│   ├── hardware-progress.md # Hardware reverse engineering findings
-│   ├── memory-map.md        # DIGIC 4+ RAM word and handler map
-│   └── mode-transition.md   # Firmware state machine analysis
-├── tools/                   # Offline verification and analysis tools
-│   ├── sx430.py             # Firmware analysis toolkit
-│   └── check_sources.py     # Source integrity checks
-└── tests/                   # Automated test suite
-```
+See [obs/OBS-SETUP.md](obs/OBS-SETUP.md) for full instructions.
 
 ---
 
-## Research & Verification
+## Verification & Testing
 
-Run the test suite from the repository root:
+Run the automated test suite:
 ```bash
 python -m unittest discover -s tests -v
 python tools/check_sources.py
 ```
-
-See [docs/hardware-progress.md](docs/hardware-progress.md) for detailed firmware analysis and reverse engineering findings.
 
 ---
 
